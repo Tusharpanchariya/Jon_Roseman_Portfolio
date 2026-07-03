@@ -1,70 +1,68 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import Header from '../components/Header';
 import Hero from '../components/Hero';
 import About from '../components/About';
+import Statistics from '../components/Statistics';
+import FeaturedWork from '../components/FeaturedWork';
+import Collaborations from '../components/Collaborations';
 import Timeline from '../components/Timeline';
-import Stories from '../components/Stories';
-import PodcastPlayer from '../components/PodcastPlayer';
-import Speaking from '../components/Speaking';
-import BookShowcase from '../components/BookShowcase';
-import Gallery from '../components/Gallery';
-import Testimonials from '../components/Testimonials';
+import BookStore from '../components/BookStore';
 import ContactForm from '../components/ContactForm';
 import Footer from '../components/Footer';
-import Lightbox, { LightboxMedia } from '../components/Lightbox';
+import CustomCursor from '../components/CustomCursor';
+import CartDrawer from '../components/CartDrawer';
+import { useEffect } from 'react';
+import Lenis from 'lenis';
 
 export default function Home() {
-  const [lightboxMedia, setLightboxMedia] = useState<LightboxMedia | null>(null);
-
-  // Setup scroll reveals for elements with .reveal class
+  
+  // Setup smooth scroll via Lenis client-side
   useEffect(() => {
-    // Add a tiny delay to ensure React has fully rendered the components in the DOM
-    const timer = setTimeout(() => {
-      const revealElements = document.querySelectorAll('.reveal');
-      if (revealElements.length === 0) return;
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      wheelMultiplier: 1,
+      touchMultiplier: 2,
+    });
 
-      const observer = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              entry.target.classList.add('active');
-            }
-          });
-        },
-        {
-          threshold: 0.1,
-          rootMargin: '0px 0px -50px 0px',
-        }
-      );
+    function raf(time: number) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
 
-      revealElements.forEach((el) => observer.observe(el));
-    }, 150);
+    requestAnimationFrame(raf);
 
-    return () => clearTimeout(timer);
+    return () => {
+      lenis.destroy();
+    };
   }, []);
 
   return (
     <>
+      {/* Custom Mouse Follower Ring */}
+      <CustomCursor />
+      
+      {/* Editorial Header */}
       <Header />
-      <main>
+      
+      {/* Landing Blocks */}
+      <main className="bg-[#FAF9F6]">
         <Hero />
         <About />
-        <Timeline onOpenVideo={(url, title) => setLightboxMedia({ url, title, type: 'video' })} />
-        <Stories onOpenStory={(title, content, date, readTime) => setLightboxMedia({ url: '', title, type: 'story', content, date, readTime })} />
-        <PodcastPlayer />
-        <Speaking />
-        <BookShowcase />
-        <Gallery 
-          onOpenVideo={(url, title) => setLightboxMedia({ url, title, type: 'video' })} 
-          onOpenStory={(title, content, date, readTime) => setLightboxMedia({ url: '', title, type: 'story', content, date, readTime })} 
-        />
-        <Testimonials />
+        <Statistics />
+        <FeaturedWork />
+        <Collaborations />
+        <Timeline />
+        <BookStore />
         <ContactForm />
       </main>
+
+      {/* Footer Details */}
       <Footer />
-      <Lightbox media={lightboxMedia} onClose={() => setLightboxMedia(null)} />
+
+      {/* Cart Slider Drawer */}
+      <CartDrawer />
     </>
   );
 }

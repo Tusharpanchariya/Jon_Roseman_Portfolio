@@ -33,11 +33,17 @@ export interface BookQuote {
 }
 
 export interface Book {
+  id: string;
   title: string;
   subtitle: string;
   tagline: string;
   description: string;
+  price: number;
+  coverImage: string;
+  gallery: string[];
   quotes: BookQuote[];
+  reviews: { text: string; author: string }[];
+  details: { label: string; value: string }[];
   links: {
     amazon: string;
     barnesNoble: string;
@@ -74,12 +80,38 @@ export interface Profile {
   roles: string[];
 }
 
+export interface Project {
+  id: string;
+  title: string;
+  artist: string;
+  year: string;
+  role: string;
+  image: string;
+  videoUrl?: string;
+  description: string;
+  credits: { label: string; value: string }[];
+  story: string;
+  gallery: string[];
+}
+
+export interface Collaboration {
+  id: string;
+  artist: string;
+  image: string;
+  story: string;
+  contribution: string;
+  gallery: string[];
+}
+
 export interface BrandData {
   profile: Profile;
   timeline: TimelineEvent[];
   stories: Story[];
   services: Service[];
-  book: Book;
+  book: Book; // Main featured book
+  books: Book[]; // All books in the store
+  projects: Project[]; // All featured works
+  collaborations: Collaboration[]; // Storytelling chapters
   podcast: Podcast;
   testimonials: Testimonial[];
 }
@@ -260,10 +292,18 @@ We got the deal signed within the hour. To survive in television agency work, yo
   ],
   
   book: {
+    id: "from-here-to-obscurity",
     title: "From Here To Obscurity",
     subtitle: "A Memoir of Music Videos, Moguls, and Madness",
     tagline: "The Hilarious, Chaotic, and Completely Uncensored Story of the Godfather of the Music Video.",
     description: "In this explosive autobiography, Jon Roseman takes you behind the camera and inside the green rooms of rock legends and television executives. From the historic shooting of Queen's 'Bohemian Rhapsody' in four hours, to near-drownings in foam with the Rolling Stones, and high-stakes bidding wars for television anchors—this is a wild, hilarious, and unapologetic look at five decades of entertainment history.",
+    price: 19.99,
+    coverImage: "/assets/book_cover.webp",
+    gallery: [
+      "/assets/book_cover.webp",
+      "/assets/brand_cover.webp",
+      "/profile/images (1).webp"
+    ],
     quotes: [
       {
         text: "An absolute riot of a book. Jon tells the stories that everyone else is too afraid to print.",
@@ -274,41 +314,202 @@ We got the deal signed within the hour. To survive in television agency work, yo
         author: "The Broadcast Journal"
       }
     ],
+    reviews: [
+      {
+        text: "A masterpiece of music history. Raw, funny, and deeply informative.",
+        author: "The Times Editorial"
+      },
+      {
+        text: "The ultimate memoir of the music video era. A must-read for any rock enthusiast.",
+        author: "NME Contributor"
+      }
+    ],
+    details: [
+      { label: "Publisher", value: "Premium Publishing House Ltd" },
+      { label: "Publication Date", value: "September 2024" },
+      { label: "Format", value: "Hardcover, 350 pages" },
+      { label: "ISBN", value: "978-3-16-148410-0" },
+      { label: "Language", value: "English" }
+    ],
     links: {
       amazon: "#",
       barnesNoble: "#",
       signedCopy: "#contact"
     }
   },
-  
-  podcast: {
-    title: "Uncensored: Untold Stories",
-    subtitle: "The Audio Archive of Jon Roseman",
-    description: "Listen to the Godfather of the Music Video narrate legendary tales of Queen, Bob Dylan, Michael Jackson, and the cutthroat business of British television.",
-    episodes: [
-      {
-        id: "pod-1",
-        title: "The £4,500 Video That Shook the World",
-        duration: "12:15",
-        summary: "How a tight deadline, a mobile truck, and a band named Queen gave birth to the music video industry as we know it today.",
-        audioSrc: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
-      },
-      {
-        id: "pod-2",
-        title: "Freddie Mercury: The Perfectionist",
-        duration: "09:40",
-        summary: "Reflecting on Freddie's theatrical genius, his demands on set, and why he was one of the most collaborative artists to work with.",
-        audioSrc: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3"
-      },
-      {
-        id: "pod-3",
-        title: "The TV Agents Secret Playbook",
-        duration: "14:20",
-        summary: "The art of the TV contract, dealing with network heads, and the time Jon walked out of a negotiation with the BBC.",
-        audioSrc: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3"
+
+  books: [
+    {
+      id: "from-here-to-obscurity",
+      title: "From Here To Obscurity",
+      subtitle: "A Memoir of Music Videos, Moguls, and Madness",
+      tagline: "The Hilarious, Chaotic, and Completely Uncensored Story of the Godfather of the Music Video.",
+      description: "In this explosive autobiography, Jon Roseman takes you behind the camera and inside the green rooms of rock legends and television executives. From the historic shooting of Queen's 'Bohemian Rhapsody' in four hours, to near-drownings in foam with the Rolling Stones, and high-stakes bidding wars for television anchors—this is a wild, hilarious, and unapologetic look at five decades of entertainment history.",
+      price: 19.99,
+      coverImage: "/assets/book_cover.webp",
+      gallery: [
+        "/assets/book_cover.webp",
+        "/assets/brand_cover.webp",
+        "/profile/images (1).webp"
+      ],
+      quotes: [
+        {
+          text: "An absolute riot of a book. Jon tells the stories that everyone else is too afraid to print.",
+          author: "British Media Review"
+        }
+      ],
+      reviews: [
+        {
+          text: "A masterpiece of music history. Raw, funny, and deeply informative.",
+          author: "The Times Editorial"
+        }
+      ],
+      details: [
+        { label: "Publisher", value: "Premium Publishing House Ltd" },
+        { label: "Publication Date", value: "September 2024" },
+        { label: "Format", value: "Hardcover, 350 pages" },
+        { label: "ISBN", value: "978-3-16-148410-0" }
+      ],
+      links: {
+        amazon: "#",
+        barnesNoble: "#",
+        signedCopy: "#contact"
       }
-    ]
-  },
+    },
+    {
+      id: "the-agents-playbook",
+      title: "The Agent's Playbook",
+      subtitle: "Negotiating Power in British Television",
+      tagline: "How to manage big talent, secure multimillion-pound contracts, and survive network boardrooms.",
+      description: "After pioneering the music video industry, Jon Roseman became Britain's most formidable television talent agent. In this sharp, strategic guide, he outlines the principles of negotiation, building personal brands, and establishing leverage when representing high-value creatives.",
+      price: 24.99,
+      coverImage: "/assets/brand_cover.webp",
+      gallery: [
+        "/assets/brand_cover.webp",
+        "/assets/book_cover.webp",
+        "/profile/images (1).webp"
+      ],
+      quotes: [
+        {
+          text: "A masterclass in media negotiation. Invaluable advice from a true powerbroker.",
+          author: "Broadcast Magazine"
+        }
+      ],
+      reviews: [
+        {
+          text: "Should be mandatory reading for anyone in talent management.",
+          author: "Media Guardian Review"
+        }
+      ],
+      details: [
+        { label: "Publisher", value: "Portfolio Press Books" },
+        { label: "Publication Date", value: "March 2025" },
+        { label: "Format", value: "Hardcover, 280 pages" },
+        { label: "ISBN", value: "978-1-40-289467-2" }
+      ],
+      links: {
+        amazon: "#",
+        barnesNoble: "#",
+        signedCopy: "#contact"
+      }
+    }
+  ],
+
+  projects: [
+    {
+      id: "queen-bohemian-rhapsody",
+      title: "Bohemian Rhapsody",
+      artist: "Queen",
+      year: "1975",
+      role: "Producer",
+      image: "/assets/brand_cover.webp",
+      videoUrl: "https://www.youtube.com/embed/fJ9rUzIMcZQ",
+      description: "The music video that birthed the modern MTV era. Produced in four hours on a budget of £4,500.",
+      credits: [
+        { label: "Director", value: "Bruce Gowers" },
+        { label: "Producer", value: "Jon Roseman" },
+        { label: "Budget", value: "£4,500" },
+        { label: "Studio", value: "Elstree Studios, UK" },
+        { label: "Cinematography", value: "Prism Lens / Contrast" }
+      ],
+      story: "In November 1975, Queen wanted to promote their new single but couldn't perform live on Top of the Pops due to tour commitments. Working under extreme time pressure and with a shoestring budget, Jon Roseman and director Bruce Gowers shot the video using a mobile unit at Elstree Studios. The innovative prism lens effects and dramatic lighting set a new visual standard for rock, creating the world's first true promotional music video.",
+      gallery: [
+        "/assets/brand_cover.webp",
+        "/profile/images.webp",
+        "/assets/book_cover.webp"
+      ]
+    },
+    {
+      id: "stones-its-only-rock",
+      title: "It's Only Rock 'n Roll",
+      artist: "The Rolling Stones",
+      year: "1974",
+      role: "Producer",
+      image: "/assets/book_cover.webp",
+      videoUrl: "https://www.youtube.com/embed/yv_E5W4Ondc",
+      description: "A chaotic and legendary shoot inside a tent filling with thousands of gallons of bubbles.",
+      credits: [
+        { label: "Artist", value: "The Rolling Stones" },
+        { label: "Producer", value: "Jon Roseman" },
+        { label: "Format", value: "16mm Film" },
+        { label: "Concept", value: "Sailor Suits in Bubble Tent" }
+      ],
+      story: "Working with Mick Jagger and the Stones was always an adventure. For 'It's Only Rock 'n Roll', the band decided to perform in sailor suits inside a large tent. As the song progressed, thousands of gallons of foam bubbles were pumped in. The band was nearly buried in foam, but Jagger's electrifying charisma turned what could have been a disaster into one of the most memorable rock visuals of the decade.",
+      gallery: [
+        "/assets/book_cover.webp",
+        "/assets/brand_cover.webp",
+        "/profile/images (1).webp"
+      ]
+    },
+    {
+      id: "jackson-say-say-say",
+      title: "Say Say Say",
+      artist: "Michael Jackson & Paul McCartney",
+      year: "1983",
+      role: "Producer / Advisor",
+      image: "/profile/images.webp",
+      videoUrl: "https://www.youtube.com/embed/aLEhh_bW-Ib",
+      description: "One of the most expensive and high-production value music videos of the 1980s MTV revolution.",
+      credits: [
+        { label: "Director", value: "Bob Giraldi" },
+        { label: "Producers", value: "Jon Roseman / Bob Giraldi" },
+        { label: "Starring", value: "Michael Jackson, Paul McCartney, Linda McCartney" }
+      ],
+      story: "During the early 80s expansion of music television, Jon's productions pushed visual storytelling boundaries. Collaborating with directors like Bob Giraldi and artists like Michael Jackson and Paul McCartney, he helped orchestrate high-production-value narratives (such as 'Say Say Say') that blurred the lines between music videos and short feature films, defining the sound and look of a generation.",
+      gallery: [
+        "/profile/images.webp",
+        "/assets/brand_cover.webp",
+        "/assets/book_cover.webp"
+      ]
+    }
+  ],
+
+  collaborations: [
+    {
+      id: "mj-collab",
+      artist: "Michael Jackson",
+      image: "/profile/images.webp",
+      story: "Michael was an absolute perfectionist. Working on high-concept storytelling visual layouts in the 1980s meant managing massive budgets and intense artistic directions. He would review dance playbacks for hours, pointing out if a dancer's toe was off by half a beat.",
+      contribution: "Coordinated visuals, choreography setups, and production logistics for Jackson's collaborative music short films in the MTV era.",
+      gallery: ["/profile/images.webp", "/assets/brand_cover.webp"]
+    },
+    {
+      id: "stones-collab",
+      artist: "The Rolling Stones",
+      image: "/assets/book_cover.webp",
+      story: "The Stones wanted raw energy and chaos. For 'It's Only Rock 'n Roll', they were wearing sailor suits in a tent filling up with industrial foam. By the end, Charlie Watts was covered in bubbles up to his neck, and Mick was sliding across the wet floor, but they never stopped playing.",
+      contribution: "Produced their most memorable promotional films of the mid-70s, managing logistical hazards like bubble generator failures.",
+      gallery: ["/assets/book_cover.webp", "/assets/brand_cover.webp"]
+    },
+    {
+      id: "queen-collab",
+      artist: "Queen",
+      image: "/assets/brand_cover.webp",
+      story: "Queen had tour commitments and couldn't appear on Top of the Pops. We had just 4 hours at Elstree Studios and a tiny budget of £4,500. We used a prism lens overlay and Mick Rock's album cover lighting to create the visual language of the modern music video.",
+      contribution: "Produced the historical 'Bohemian Rhapsody' video, pioneering the use of video technology as a major marketing tool.",
+      gallery: ["/assets/brand_cover.webp", "/profile/images.webp"]
+    }
+  ],
   
   testimonials: [
     {

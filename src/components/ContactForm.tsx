@@ -1,197 +1,208 @@
 'use client';
 
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
 import { useState } from 'react';
+import { Mail, ShieldCheck, Send } from 'lucide-react';
 
-type StatusType = 'idle' | 'success' | 'error';
+const contactSchema = z.object({
+  name: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
+  email: z.string().email({ message: 'Please enter a valid email address.' }),
+  company: z.string().optional(),
+  message: z.string().min(10, { message: 'Message must be at least 10 characters.' }),
+});
+
+type ContactFormValues = z.infer<typeof contactSchema>;
 
 export default function ContactForm() {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [inquiryType, setInquiryType] = useState('');
-  const [message, setMessage] = useState('');
-  
-  const [status, setStatus] = useState<StatusType>('idle');
-  const [alertMessage, setAlertMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitSuccess, setSubmitSuccess] = useState<string | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<ContactFormValues>({
+    resolver: zodResolver(contactSchema),
+  });
 
-    if (!name.trim() || !email.trim() || !inquiryType || !message.trim()) {
-      setStatus('error');
-      setAlertMessage('Please fill in all required fields before transmitting.');
-      return;
-    }
-
+  const onSubmit = async (data: ContactFormValues) => {
     setIsSubmitting(true);
-    setStatus('idle');
+    setSubmitSuccess(null);
+    setSubmitError(null);
 
-    // Simulate luxury API communication
-    setTimeout(() => {
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+
+      const result = await res.json();
+      if (res.ok) {
+        setSubmitSuccess('Thank you. Your inquiry has been transmitted to our management team.');
+        reset();
+      } else {
+        setSubmitError(result.error || 'Failed to send message.');
+      }
+    } catch (err) {
+      setSubmitError('An unexpected server error occurred.');
+    } finally {
       setIsSubmitting(false);
-      setStatus('success');
-      setAlertMessage("Transmission Successful. Jon Roseman's office has received your inquiry. We will respond within 48 business hours.");
-      
-      // Reset form fields
-      setName('');
-      setEmail('');
-      setInquiryType('');
-      setMessage('');
-
-      // Auto dismiss success alert
-      setTimeout(() => {
-        setStatus('idle');
-      }, 7000);
-    }, 2000);
+    }
   };
 
   return (
-    <section id="contact" className="contact-section section-padding">
-      <div className="container">
-        <div className="contact-grid">
+    <section id="contact" className="py-24 md:py-32 bg-[#FAF9F6] border-b border-[#E7E7E7] font-sans">
+      <div className="max-w-7xl mx-auto px-6 md:px-12">
+        
+        {/* Editorial Title */}
+        <div className="mb-20">
+          <span className="text-[10px] uppercase tracking-[0.3em] text-[#666666] block mb-3">Get In Touch</span>
+          <h2 className="font-serif text-5xl md:text-8xl font-light text-[#111111] tracking-tight uppercase leading-none">
+            Inquiries
+          </h2>
+          <div className="w-16 h-[1px] bg-[#111111] mt-6"></div>
+        </div>
+
+        {/* 2 Column Editorial grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-start">
           
-          {/* Contact Details Information */}
-          <div className="contact-info-column">
-            <span className="section-subtitle gold-text">Let's Connect</span>
-            <h2 className="section-title">Inquiries & Bookings</h2>
-            <p className="contact-lead-text">
-              Whether you represent a corporate event, a broadcast network, a publication, or are simply requesting a signed copy of 'From Here To Obscurity', use the form to reach Jon Roseman's office.
-            </p>
-            
-            <div className="contact-details-list">
-              <div className="contact-detail-item">
-                <div className="contact-icon">
-                  <i className="fa-solid fa-envelope gold-text"></i>
-                </div>
-                <div className="contact-text">
-                  <span className="contact-label">Direct Correspondence</span>
-                  <a href="mailto:office@jonroseman.com" className="contact-link">
-                    office@jonroseman.com
-                  </a>
-                </div>
-              </div>
-              
-              <div className="contact-detail-item">
-                <div className="contact-icon">
-                  <i className="fa-solid fa-briefcase gold-text"></i>
-                </div>
-                <div className="contact-text">
-                  <span className="contact-label">Speaking & Consulting Agencies</span>
-                  <p className="contact-info-desc">
-                    Represented directly. For keynotes, after-dinner speaking engagements, and media consulting briefs.
-                  </p>
-                </div>
-              </div>
+          {/* Portrait & Booking Details Column */}
+          <div className="lg:col-span-5 space-y-8">
+            <div className="relative aspect-[4/5] bg-white border border-[#E7E7E7] p-2">
+              <img 
+                src="/profile/jon-roseman-agent-murdered-television-presenter-jill-440nw-9032981a.jpg" 
+                alt="Jon Roseman Contact Representation" 
+                className="w-full h-full object-cover grayscale" 
+              />
             </div>
 
-            <div className="social-links-block">
-              <span className="social-label gold-text">Follow Jon's Commentary:</span>
-              <div className="social-links">
-                <a href="#" className="social-link-btn" title="LinkedIn"><i className="fa-brands fa-linkedin-in"></i></a>
-                <a href="#" className="social-link-btn" title="YouTube"><i className="fa-brands fa-youtube"></i></a>
-                <a href="#" className="social-link-btn" title="Twitter/X"><i className="fa-brands fa-x-twitter"></i></a>
+            {/* Direct Contacts list */}
+            <div className="space-y-6 pt-4 text-xs">
+              <div className="border-b border-[#E7E7E7] pb-4">
+                <span className="text-[9px] uppercase tracking-widest text-[#666666] block mb-1">Press & Media Contact</span>
+                <a href="mailto:press@jonroseman.com" className="font-semibold text-[#111111] hover:underline">press@jonroseman.com</a>
+              </div>
+              <div className="border-b border-[#E7E7E7] pb-4">
+                <span className="text-[9px] uppercase tracking-widest text-[#666666] block mb-1">Corporate Speaking & Booking</span>
+                <a href="mailto:booking@jonroseman.com" className="font-semibold text-[#111111] hover:underline">booking@jonroseman.com</a>
+              </div>
+              <div className="pb-4">
+                <span className="text-[9px] uppercase tracking-widest text-[#666666] block mb-1">Representation & Management</span>
+                <a href="mailto:management@jonroseman.com" className="font-semibold text-[#111111] hover:underline">management@jonroseman.com</a>
               </div>
             </div>
           </div>
 
-          {/* Booking Inquiry Form */}
-          <div className="contact-form-column">
-            <div className="glass-form-card">
-              <h3 className="form-title">Send a Message</h3>
-              
-              <form onSubmit={handleSubmit} className="luxury-form">
-                <div className="form-row">
-                  <div className="form-group">
-                    <label htmlFor="form-user-name">Full Name *</label>
-                    <input 
-                      type="text" 
-                      id="form-user-name" 
-                      required 
-                      placeholder="e.g. Michael Jackson"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                    />
-                  </div>
-                </div>
-                
-                <div className="form-row">
-                  <div className="form-group">
-                    <label htmlFor="form-user-email">Email Address *</label>
-                    <input 
-                      type="email" 
-                      id="form-user-email" 
-                      required 
-                      placeholder="e.g. michael@jackson.com"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                    />
-                  </div>
-                </div>
-
-                <div className="form-row">
-                  <div className="form-group">
-                    <label htmlFor="form-inquiry-type">Inquiry Type *</label>
-                    <select 
-                      id="form-inquiry-type" 
-                      required
-                      value={inquiryType}
-                      onChange={(e) => setInquiryType(e.target.value)}
-                    >
-                      <option value="" disabled>Select an option...</option>
-                      <option value="speaking">After Dinner / Keynote Speaking</option>
-                      <option value="consulting">Media Consulting & Mentoring</option>
-                      <option value="book">Signed Copy of 'From Here to Obscurity'</option>
-                      <option value="press">Press & Media Interview Request</option>
-                      <option value="other">General Message / Untold Story Inquiry</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div className="form-row">
-                  <div className="form-group">
-                    <label htmlFor="form-user-message">Message *</label>
-                    <textarea 
-                      id="form-user-message" 
-                      rows={5} 
-                      required 
-                      placeholder="Share your project details, event schedule, or query..."
-                      value={message}
-                      onChange={(e) => setMessage(e.target.value)}
-                    ></textarea>
-                  </div>
-                </div>
-
-                {/* Status and Error Indicators */}
-                {status !== 'idle' && (
-                  <div className={`form-alert ${status}`}>
-                    {alertMessage}
-                  </div>
-                )}
-
-                <div className="form-row form-submit-row">
-                  <button 
-                    type="submit" 
-                    className="btn btn-gold btn-full"
-                    disabled={isSubmitting}
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <span>Transmitting Secured Inquiry...</span> 
-                        <i className="fa-solid fa-spinner fa-spin gold-text" style={{ marginLeft: '10px' }}></i>
-                      </>
-                    ) : (
-                      <>
-                        <span>Send Secure Inquiry</span> 
-                        <i className="fa-solid fa-paper-plane" style={{ marginLeft: '10px' }}></i>
-                      </>
-                    )}
-                  </button>
-                </div>
-              </form>
+          {/* Form Column */}
+          <div className="lg:col-span-7 space-y-8">
+            <div className="space-y-4">
+              <h3 className="font-serif text-3xl md:text-4xl font-light text-[#111111] leading-tight">
+                Let's Create Something Timeless.
+              </h3>
+              <p className="text-xs text-[#666666] leading-relaxed font-light">
+                Submit an inquiry below for literary contracts, consulting bookings, and broadcast comments. 
+              </p>
             </div>
+
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+              
+              {/* Name */}
+              <div className="space-y-2">
+                <label htmlFor="name" className="text-[10px] uppercase tracking-widest font-semibold text-[#111111] block">
+                  Your Name *
+                </label>
+                <input
+                  id="name"
+                  type="text"
+                  {...register('name')}
+                  className="w-full bg-white border border-[#E7E7E7] px-4 py-3 text-xs focus:border-[#111111] outline-hidden transition-colors"
+                  placeholder="e.g. Sterling Cooper"
+                />
+                {errors.name && (
+                  <p className="text-[10px] text-red-600 font-semibold">{errors.name.message}</p>
+                )}
+              </div>
+
+              {/* Email */}
+              <div className="space-y-2">
+                <label htmlFor="email" className="text-[10px] uppercase tracking-widest font-semibold text-[#111111] block">
+                  Email Address *
+                </label>
+                <input
+                  id="email"
+                  type="email"
+                  {...register('email')}
+                  className="w-full bg-white border border-[#E7E7E7] px-4 py-3 text-xs focus:border-[#111111] outline-hidden transition-colors"
+                  placeholder="e.g. email@company.com"
+                />
+                {errors.email && (
+                  <p className="text-[10px] text-red-600 font-semibold">{errors.email.message}</p>
+                )}
+              </div>
+
+              {/* Company */}
+              <div className="space-y-2">
+                <label htmlFor="company" className="text-[10px] uppercase tracking-widest font-semibold text-[#111111] block">
+                  Company / Organization
+                </label>
+                <input
+                  id="company"
+                  type="text"
+                  {...register('company')}
+                  className="w-full bg-white border border-[#E7E7E7] px-4 py-3 text-xs focus:border-[#111111] outline-hidden transition-colors"
+                  placeholder="e.g. Broadcast Corporation"
+                />
+              </div>
+
+              {/* Message */}
+              <div className="space-y-2">
+                <label htmlFor="message" className="text-[10px] uppercase tracking-widest font-semibold text-[#111111] block">
+                  Message *
+                </label>
+                <textarea
+                  id="message"
+                  rows={6}
+                  {...register('message')}
+                  className="w-full bg-white border border-[#E7E7E7] px-4 py-3 text-xs focus:border-[#111111] outline-hidden transition-colors resize-y"
+                  placeholder="Describe your inquiry..."
+                ></textarea>
+                {errors.message && (
+                  <p className="text-[10px] text-red-600 font-semibold">{errors.message.message}</p>
+                )}
+              </div>
+
+              {/* Status Feedbacks */}
+              {submitSuccess && (
+                <div className="bg-emerald-50 border border-emerald-300 text-emerald-800 p-4 text-xs font-medium flex items-center gap-2">
+                  <ShieldCheck className="w-4 h-4 stroke-1.5" />
+                  <span>{submitSuccess}</span>
+                </div>
+              )}
+              {submitError && (
+                <div className="bg-red-50 border border-red-300 text-red-800 p-4 text-xs font-medium">
+                  {submitError}
+                </div>
+              )}
+
+              {/* Submit Button */}
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full sm:w-auto bg-[#111111] text-[#FAF9F6] border border-[#111111] py-4 px-10 text-[10px] uppercase tracking-widest font-semibold hover:bg-[#666666] hover:border-[#666666] transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+              >
+                {isSubmitting ? 'Transmitting...' : 'Send Inquiry'}
+              </button>
+
+            </form>
           </div>
 
         </div>
+
       </div>
     </section>
   );
