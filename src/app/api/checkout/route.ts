@@ -2,6 +2,42 @@ import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { BRAND_DATA } from '../../../data/content';
 
+const SHIPPING_COUNTRIES: Stripe.Checkout.SessionCreateParams.ShippingAddressCollection.AllowedCountry[] = [
+  'US',
+  'GB',
+  'CA',
+  'AU',
+  'AT',
+  'BE',
+  'BG',
+  'CH',
+  'CY',
+  'CZ',
+  'DE',
+  'DK',
+  'EE',
+  'ES',
+  'FI',
+  'FR',
+  'GR',
+  'HR',
+  'HU',
+  'IE',
+  'IT',
+  'LT',
+  'LU',
+  'LV',
+  'MT',
+  'NL',
+  'NO',
+  'PL',
+  'PT',
+  'RO',
+  'SE',
+  'SI',
+  'SK',
+];
+
 // Instantiate Stripe safely with fallback
 const stripe = process.env.STRIPE_SECRET_KEY
   ? new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: '2024-11-20.acacia' as any })
@@ -55,7 +91,7 @@ export async function POST(req: Request) {
       cancel_url: `${req.headers.get('origin') || ''}/`,
       billing_address_collection: 'required',
       shipping_address_collection: {
-        allowed_countries: ['US', 'GB', 'CA', 'AU', 'EU' as any],
+        allowed_countries: SHIPPING_COUNTRIES,
       },
     });
 

@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://jonroseman.com'),
   title: 'Jon Roseman | Digital Archive & Bookstore',
   description: 'Official digital archive of Jon Roseman, Godfather of the Music Video, pioneer producer of Queen\'s "Bohemian Rhapsody", top British television talent agent, and author.',
   keywords: 'Jon Roseman, Godfather of the Music Video, Bohemian Rhapsody, Queen music video, Rolling Stones video, British TV agent, From Here to Obscurity book, after dinner speaker',
