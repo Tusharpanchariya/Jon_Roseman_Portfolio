@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { BRAND_DATA, TimelineEvent } from '../data/content';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 import { Play } from 'lucide-react';
 
 interface TimelineProps {

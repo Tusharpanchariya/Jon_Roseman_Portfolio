@@ -2,26 +2,9 @@
 
 /**
  * PRODUCTION SETUP NOTE:
- * When ready to deploy authentication, run:
- * npx prisma migrate dev --name add-auth-tables
- * 
- * Un-comment the adapter block below to wire Better Auth into the SQLite/Postgres DB.
+ * When ready to deploy authentication, select a database provider
+ * and install your preferred adapter (e.g. SQLite, PostgreSQL).
  */
-
-/*
-import { betterAuth } from 'better-auth';
-import { prismaAdapter } from 'better-auth/adapters/prisma';
-import { db } from './db';
-
-export const auth = betterAuth({
-  database: prismaAdapter(db, {
-    provider: 'sqlite',
-  }),
-  emailAndPassword: {
-    enabled: true,
-  },
-});
-*/
 
 // Sandbox fallback mock authentication helper
 export const auth = {

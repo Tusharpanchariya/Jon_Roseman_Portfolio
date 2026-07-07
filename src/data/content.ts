@@ -510,6 +510,21 @@ We got the deal signed within the hour. To survive in television agency work, yo
       gallery: ["/assets/brand_cover.webp", "/profile/images.webp"]
     }
   ],
+
+  podcast: {
+    title: "Behind the Velvet Rope",
+    subtitle: "Rock 'n' Roll Stories and Media Secrets",
+    description: "Listen to Jon Roseman recount stories from his legendary career.",
+    episodes: [
+      {
+        id: "episode-1",
+        title: "The Four Hours at Elstree: Producing Bohemian Rhapsody",
+        duration: "45 mins",
+        summary: "Jon talks about the chaotic and rushed session that resulted in the world's most famous music video.",
+        audioSrc: "/assets/audio/episode-1.mp3"
+      }
+    ]
+  },
   
   testimonials: [
     {
