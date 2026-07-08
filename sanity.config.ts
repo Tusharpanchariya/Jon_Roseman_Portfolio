@@ -5,9 +5,10 @@ import { schemaTypes } from './src/sanity/schema';
 export default defineConfig({
   name: 'default',
   title: 'Jon Roseman CMS Studio',
+  basePath: '/studio',
 
-  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'mock_project_id',
-  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || 'production',
+  projectId: (process.env.NEXT_PUBLIC_SANITY_PROJECT_ID as string) || 'mock_project_id',
+  dataset: (process.env.NEXT_PUBLIC_SANITY_DATASET as string) || 'production',
 
   plugins: [structureTool()],
 

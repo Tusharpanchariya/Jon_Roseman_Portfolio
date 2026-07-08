@@ -166,10 +166,12 @@ export const collaborationSchema = {
   ]
 };
 
-export const schemaTypes = [
-  projectSchema,
-  bookSchema,
-  biographySchema,
-  timelineSchema,
-  collaborationSchema
+import { type SchemaTypeDefinition } from 'sanity';
+
+export const schemaTypes: SchemaTypeDefinition[] = [
+  projectSchema as SchemaTypeDefinition,
+  bookSchema as SchemaTypeDefinition,
+  biographySchema as SchemaTypeDefinition,
+  timelineSchema as SchemaTypeDefinition,
+  collaborationSchema as SchemaTypeDefinition
 ];

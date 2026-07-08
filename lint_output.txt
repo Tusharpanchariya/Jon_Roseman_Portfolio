@@ -1,0 +1,6 @@
+
+> jon-roseman-portfolio@1.0.0 lint
+> next lint
+
+'next' is not recognized as an internal or external command,
+operable program or batch file.
